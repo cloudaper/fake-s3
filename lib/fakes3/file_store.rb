@@ -260,7 +260,11 @@ module FakeS3
     def create_metadata(content,request)
       metadata = {}
       metadata[:md5] = Digest::MD5.file(content).hexdigest
-      metadata[:content_type] = request.header["content-type"].first
+
+      # Hack: do not store content type of POST request multipart/form-data
+      # rather just leave it empty.
+      # metadata[:content_type] = request.header["content-type"].first
+      metadata[:content_type] = ""
       metadata[:size] = File.size(content)
       metadata[:modified_date] = File.mtime(content).utc.iso8601(SUBSECOND_PRECISION)
       metadata[:amazon_metadata] = {}
